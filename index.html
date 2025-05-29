@@ -36,6 +36,9 @@
       height: 100%;
       width: 0%;
       background-color: #004aad;
+      color: white;
+      text-align: center;
+      line-height: 20px;
       transition: width 0.5s ease-in-out;
     }
 
@@ -44,7 +47,7 @@
       padding: 30px;
       border-radius: 15px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      max-width: 700px;
+      max-width: 800px;
       width: 100%;
       box-sizing: border-box;
       position: relative;
@@ -148,7 +151,7 @@
 <body>
 
   <h1>Test de Moda Sostenible</h1>
-  <div id="progreso"><div id="barra-progreso"></div></div>
+  <div id="progreso"><div id="barra-progreso">0%</div></div>
 
   <form id="formulario">
     <div id="secciones"></div>
@@ -162,35 +165,30 @@
 
   <script>
     const preguntas = [
-      // Sección 1
       "¿Lees las etiquetas para saber dónde fue fabricada una prenda?",
       "¿Compras por impulso en rebajas?",
       "¿Has comprado en tiendas de segunda mano?",
       "¿Prefieres calidad sobre cantidad al comprar ropa?",
       "¿Lavas la ropa solo cuando está sucia?",
       "¿Repararías una prenda antes de desecharla?",
-      // Sección 2
       "¿Has investigado sobre marcas sostenibles?",
       "¿Conoces el impacto del fast fashion?",
       "¿Te fijas en los materiales reciclables al comprar ropa?",
       "¿Evitas comprar ropa sintética como el poliéster?",
       "¿Te interesa la moda circular?",
       "¿Has participado en intercambios de ropa?",
-      // Sección 3
       "¿Prefieres asegurarte tú mismo una segunda vida a tus prendas a depositarla en contenedores?",
       "¿Compras ropa para cada temporada aunque no la necesites?",
       "¿Prefieres marcas locales sobre internacionales?",
       "¿Compras online en webs como SHEIN?",
       "¿Apoyas campañas sobre consumo consciente?",
       "¿Planificas tus compras de moda?",
-      // Sección 4
       "¿Conoces el concepto de armario cápsula?",
       "¿Tienes ropa que no has usado en más de un año?",
       "¿Evitas devoluciones para reducir emisiones?",
       "¿Secas la ropa al aire en lugar de usar secadora?",
       "¿Reutilizas ropa para diferentes ocasiones?",
       "¿Te influye la publicidad en tus decisiones de compra?",
-      // Sección 5
       "¿Cuidas tus prendas para que duren más?",
       "¿Lavas en frío para ahorrar energía?",
       "¿Compras productos de comercio justo?",
@@ -201,11 +199,9 @@
 
     const opciones = ["Siempre", "A menudo", "A veces", "Nunca"];
     const puntajes = [3, 2, 1, 0];
-
     const totalPreguntas = preguntas.length;
     const preguntasPorSeccion = 6;
     const totalSecciones = Math.ceil(totalPreguntas / preguntasPorSeccion);
-
     const respuestas = Array(totalPreguntas).fill(null);
     let seccionActual = 0;
 
@@ -230,10 +226,9 @@
         seccion.dataset.index = i;
         if (i === 0) seccion.classList.add("active");
 
-        // Imagen para la sección
         const imagen = document.createElement("img");
-        imagen.src = imagesMl/${nombresImagenes[i]};
-        imagen.alt = Sección ${i + 1};
+        imagen.src = `imagesMl/${nombresImagenes[i]}`;
+        imagen.alt = `Sección ${i + 1}`;
         seccion.appendChild(imagen);
 
         const desde = i * preguntasPorSeccion;
@@ -244,14 +239,14 @@
           preguntaDiv.className = "pregunta";
 
           const p = document.createElement("p");
-          p.textContent = ${j + 1}. ${preguntas[j]};
+          p.textContent = `${j + 1}. ${preguntas[j]}`;
           preguntaDiv.appendChild(p);
 
           opciones.forEach((op, idx) => {
             const label = document.createElement("label");
             const input = document.createElement("input");
             input.type = "radio";
-            input.name = pregunta${j};
+            input.name = `pregunta${j}`;
             input.value = puntajes[idx];
             input.checked = respuestas[j] === puntajes[idx];
             input.addEventListener("change", () => {
@@ -273,6 +268,63 @@
     function actualizarProgreso() {
       const respondidas = respuestas.filter(r => r !== null).length;
       const porcentaje = (respondidas / totalPreguntas) * 100;
-      barraProgreso.style.width = porcentaje + '%';
-  barraProgreso.textContent = Math.round(porcentaje) + '%';
-}
+      barraProgreso.style.width = `${porcentaje}%`;
+      barraProgreso.textContent = `${Math.round(porcentaje)}%`;
+    }
+
+    function mostrarSeccion(index) {
+      document.querySelectorAll(".seccion").forEach((s, i) => {
+        s.classList.toggle("active", i === index);
+      });
+
+      btnAnterior.disabled = index === 0;
+      btnSiguiente.textContent = index === totalSecciones - 1 ? "Finalizar" : "Siguiente";
+    }
+
+    function calcularResultado() {
+      const total = respuestas.reduce((a, b) => a + b, 0);
+      const maximo = totalPreguntas * 3;
+      const porcentaje = (total / maximo) * 100;
+
+      resultado.classList.remove("alto", "medio", "bajo");
+
+      if (porcentaje >= 75) {
+        resultado.classList.add("alto");
+        resultado.textContent = "¡Excelente! Tienes una alta conciencia sobre la moda sostenible.";
+      } else if (porcentaje >= 50) {
+        resultado.classList.add("medio");
+        resultado.textContent = "¡Vas por buen camino! Puedes mejorar algunos hábitos.";
+      } else {
+        resultado.classList.add("bajo");
+        resultado.textContent = "Aún puedes mejorar. ¡Explora más sobre moda consciente!";
+      }
+
+      resultado.style.display = "block";
+      document.getElementById("formulario").style.display = "none";
+    }
+
+    btnAnterior.addEventListener("click", () => {
+      if (seccionActual > 0) {
+        seccionActual--;
+        mostrarSeccion(seccionActual);
+      }
+    });
+
+    btnSiguiente.addEventListener("click", () => {
+      if (seccionActual < totalSecciones - 1) {
+        seccionActual++;
+        mostrarSeccion(seccionActual);
+      } else {
+        if (respuestas.includes(null)) {
+          alert("Por favor responde todas las preguntas antes de finalizar.");
+        } else {
+          calcularResultado();
+        }
+      }
+    });
+
+    crearSecciones();
+    actualizarProgreso();
+  </script>
+</body>
+</html>
