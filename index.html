@@ -288,16 +288,28 @@
 
       resultado.classList.remove("alto", "medio", "bajo");
 
+      let mensaje = "";
+      let emoji = "";
+
       if (porcentaje >= 75) {
         resultado.classList.add("alto");
-        resultado.textContent = "¡Excelente! Tienes una alta conciencia sobre la moda sostenible.";
+        mensaje = "¡Excelente! Tienes una alta conciencia sobre la moda sostenible.";
+        emoji = "🧘‍♀️🌿";
       } else if (porcentaje >= 50) {
         resultado.classList.add("medio");
-        resultado.textContent = "¡Vas por buen camino! Puedes mejorar algunos hábitos.";
+        mensaje = "¡Vas por buen camino! Puedes mejorar algunos hábitos.";
+        emoji = "🤔♻️";
       } else {
         resultado.classList.add("bajo");
-        resultado.textContent = "Aún puedes mejorar. ¡Explora más sobre moda consciente!";
+        mensaje = "Aún puedes mejorar. ¡Explora más sobre moda consciente!";
+        emoji = "😬🛍️";
       }
+
+      resultado.innerHTML = `
+        <p>${mensaje}</p>
+        <p><strong>Puntuación:</strong> ${total} / ${maximo}</p>
+        <p style="font-size: 2rem;">${emoji}</p>
+      `;
 
       resultado.style.display = "block";
       document.getElementById("formulario").style.display = "none";
